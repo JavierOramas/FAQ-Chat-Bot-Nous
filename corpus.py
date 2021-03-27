@@ -1,8 +1,7 @@
+# Dummy corpus for testing
+
 CORPUS = [
-    {
-        "Question": "Can I talk to a Person?",
-        "Answer": "Yes of Course, sout yourself"
-    },
+
     {
         "Question": "Am I eligible for financial Aid?",
         "Answer": "Virtually every student qualifies for some type of financial aid. See our HOW TO APPLY information and visit the PAIS (Preliminary Aid Information System) web site for the financial aid eligibility worksheet."
@@ -56,3 +55,14 @@ CORPUS = [
         "Answer": "The chart provided can help you determine eligibility."
     }
 ]
+
+TALK_TO_HUMAN = [
+            {
+                "Question": "Can I talk to a Person?",
+                "Answer": "Yes of Course, sout yourself"
+            }, 
+            {
+                "Question": "Can I talk to a human?",
+                "Answer": "Yes of Course, sout yourself"
+            }
+        ]

@@ -1,6 +1,6 @@
 import re, math
 from collections import Counter
-from corpus import CORPUS
+from corpus import CORPUS, TALK_TO_HUMAN
 
 WORD = re.compile(r'\w+')
 
@@ -31,6 +31,17 @@ def find_most_similar(word):
     max = {"answer": None, "score": 0, "question": None}
 
     for each in CORPUS:
+        score = compare_similarity(word, each['Question'])
+        if score > max['score']:
+            max['score'] = score
+            max['answer'] = each['Answer']
+            max['question'] = each['Question']
+    return {"score": max['score'], "answer": max['answer'], "question": max['question']}
+
+def find_most_similar_interaction(word):
+    max = {"answer": None, "score": 0, "question": None}
+
+    for each in TALK_TO_HUMAN:
         score = compare_similarity(word, each['Question'])
         if score > max['score']:
             max['score'] = score

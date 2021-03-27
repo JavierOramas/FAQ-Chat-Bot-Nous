@@ -1,44 +1,67 @@
-from similarity import find_most_similar
-from corpus import CORPUS
+from similarity import find_most_similar, find_most_similar_interaction
+from corpus import CORPUS,TALK_TO_HUMAN
 
 class Bot:
 
     def __init__(self):
         self.event_stack = []
+        self.interact = []
         self.settings = {
             "min_score": 0.3,
             "help_email": "fakeEmail@notArealEmail.com",
             "faq_page": "www.NotActuallyAnFAQ.com"
         }
+        # print ("Ask a question:")
+        # while(True):
+        #     self.allow_question()
+        
 
-        print ("Ask a question:")
-        while(True):
-            self.allow_question()
-
-    def allow_question(self):
+    def allow_question(self, text):
         # Check for event stack
         potential_event = None
+        # print(self.interact)
+        
         if(len(self.event_stack)):
             potential_event = self.event_stack.pop()
+        if len(self.interact):
+            self.interact.pop()
+            # text = input("Question to Human: ")
+            # send question to humans
+            print("ok, wait until a human answers")
+            return {'answer': 'Question sent, wait for a response'}
+            
         if potential_event:
-            text = input("Response: ")
+            # text = input("Response: ")
             potential_event.handle_response(text, self)
         else:
-            text = input("Question: ")
+            # text = input("Question: ")
             answer = self.pre_built_responses_or_none(text)
+            person = find_most_similar_interaction(text)
+            
             if not answer:
+                if person['score'] > 0.3:
+                    self.interact.append(True)
+                    print('Asking what to send to a human')
+                    return {'answer': 'What do you want to ask to a human?'}
                 answer = find_most_similar(text)
+                if answer['score'] < 0.3:
+                    # send the question to humans
+                    print('Cant answer, Question sent to human')
+                    return {'answer': 'i cannot answer that, i just sent it to a human, wait for the response'}
                 self.answer_question(answer, text)
+            
 
     def answer_question(self, answer, text):
         if answer['score'] > self.settings['min_score']:
             # set off event asking if the response question is what they were looking for
-            print ("\nBest-fit question: %s (Score: %s)\nAnswer: %s\n" % (answer['question'],
-                                                                          answer['score'],
-                                                                          answer['answer']))
+            return {'most_similar_question':answer['question'],
+                    'similarity_percentage':answer['score'],
+                    'answer':answer['answer']}
+
         else:
-            print ("Woops! I'm having trouble finding the answer to your question. " \
-                  "Would you like to see the list of questions that I am able to answer?\n")
+            return {'most_similar_question':'',
+                    'similarity_percentage':0.0,
+                    'answer': 'I could not understand you, Would you like to see the list of questions that I am able to answer?\n'}
             # set off event for corpus dump
             self.event_stack.append(Event("corpus_dump", text))
 
@@ -46,12 +69,16 @@ class Bot:
         # only return answer if exact match is found
         pre_built = [
             {
+                "Question": "Hello",
+                "Answer": "Hello, What can I Help you with?\n"
+            },
+            {
                 "Question": "Who made you?",
-                "Answer": "I was created by TS-North.\n"
+                "Answer": "I was created by Nous.\n"
             },
             {
                 "Question": "When were you born?",
-                "Answer": "I first opened my eyes in alpha stage February 9th, 2018.\n"
+                "Answer": "I said my first word on march 26, 2021.\n"
             },
             {
                 "Question": "What is your purpose?",
@@ -71,7 +98,6 @@ class Bot:
                 print (each_question['Answer'])
                 return each_question
 
-
     def dump_corpus(self):
         # Get json from backend 
         question_stack = []
@@ -84,8 +110,8 @@ class Event:
 
     def __init__(self, kind, text):
         self.kind = kind
-        self.CONFIRMATIONS = ["yes", "sure", "okay", "that would be nice", "yep"]
-        self.NEGATIONS = ["no", "don't", "dont", "nope"]
+        self.CONFIRMATIONS = ["yes", "sure", "okay", "that would be nice", "yep", "ok", "fine"]
+        self.NEGATIONS = ["no", "don't", "dont", "nope", "nevermind"]
         self.original_text = text
 
     def handle_response(self, text, bot):
@@ -106,13 +132,19 @@ class Event:
                     print ("Feel free to ask another question or send an email to %s.\n" % bot.settings['help_email'])
                     bot.allow_question()
                     return 0
+       
+        text = input("Question: ")
+        answer = self.pre_built_responses_or_none(text)
+        if not answer:
+            answer = find_most_similar(text)
+            self.answer_question(answer, text)
         # base case, no confirmation or negation found
-        print ("I'm having trouble understanding what you are saying. At the time, my ability is quite limited, " \
-              "please refer to %s or email %s if I was not able to answer your question. " \
-              "For convenience, a google link has been generated below: \n%s\n" % (bot.settings['faq_page'],
-                                                                                 bot.settings['help_email'],
-                                                                                 "https://www.google.com/search?q=%s" %
-                                                                                 ("+".join(self.original_text.split(" ")))))
+        # print ("I'm having trouble understanding what you are saying. At the time, my ability is quite limited, " \
+        #       "please refer to %s or email %s if I was not able to answer your question. " \
+        #       "For convenience, a google link has been generated below: \n%s\n" % (bot.settings['faq_page'],
+        #                                                                          bot.settings['help_email'],
+        #                                                                          "https://www.google.com/search?q=%s" %
+        #                                                                          ("+".join(self.original_text.split(" ")))))
         return 0
 
 
