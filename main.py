@@ -20,8 +20,10 @@ class Bot:
         # Check for event stack
         potential_event = None
         # print(self.interact)
+        print('here')
         
         if(len(self.event_stack)):
+            print('here')
             potential_event = self.event_stack.pop()
         if len(self.interact):
             self.interact.pop()
@@ -34,21 +36,24 @@ class Bot:
             # text = input("Response: ")
             potential_event.handle_response(text, self)
         else:
+            print('here')
             # text = input("Question: ")
             answer = self.pre_built_responses_or_none(text)
             person = find_most_similar_interaction(text)
             
             if not answer:
+                # print('here')
                 if person['score'] > 0.3:
                     self.interact.append(True)
                     print('Asking what to send to a human')
                     return {'answer': 'What do you want to ask to a human?'}
                 answer = find_most_similar(text)
+                print(answer['score'])
                 if answer['score'] < 0.3:
                     # send the question to humans
                     print('Cant answer, Question sent to human')
                     return {'answer': 'i cannot answer that, i just sent it to a human, wait for the response'}
-                self.answer_question(answer, text)
+                return self.answer_question(answer, text)
             
 
     def answer_question(self, answer, text):
