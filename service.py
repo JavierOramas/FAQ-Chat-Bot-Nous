@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 from similarity import find_most_similar
 from main import Bot
 
@@ -7,16 +7,11 @@ bot = Bot()
 
 @app.route('/')
 def root():
-    return '<h1> Ask a question</h1>'
+    return render_template('index.html')
 
-@app.route('/question/<string:data>', methods=['GET', 'POST'])
-def return_answer(data='person'):
-    # if request.method == 'GET':
-        # return '{}'
+@app.route('/question', methods=['GET', 'POST'])
+def return_answer(data): 
     
-    # else:
-    
-        
     answer = bot.allow_question(text=data)
     return {"answer": answer} 
 

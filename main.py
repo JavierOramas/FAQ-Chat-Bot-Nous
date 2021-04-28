@@ -11,19 +11,18 @@ class Bot:
             "help_email": "fakeEmail@notArealEmail.com",
             "faq_page": "www.NotActuallyAnFAQ.com"
         }
-        # print ("Ask a question:")
-        # while(True):
-        #     self.allow_question()
+        print ("Ask a question:")
+        while(True):
+            text = input()
+            self.allow_question(text)
         
 
     def allow_question(self, text):
         # Check for event stack
         potential_event = None
         # print(self.interact)
-        print('here')
         
         if(len(self.event_stack)):
-            print('here')
             potential_event = self.event_stack.pop()
         if len(self.interact):
             self.interact.pop()
@@ -36,7 +35,7 @@ class Bot:
             # text = input("Response: ")
             potential_event.handle_response(text, self)
         else:
-            print('here')
+            # print('here')
             # text = input("Question: ")
             answer = self.pre_built_responses_or_none(text)
             person = find_most_similar_interaction(text)
@@ -53,6 +52,7 @@ class Bot:
                     # send the question to humans
                     print('Cant answer, Question sent to human')
                     return {'answer': 'i cannot answer that, i just sent it to a human, wait for the response'}
+                print(self.answer_question(answer, text))
                 return self.answer_question(answer, text)
             
 
@@ -64,6 +64,7 @@ class Bot:
                     'answer':answer['answer']}
 
         else:
+            
             return {'most_similar_question':'',
                     'similarity_percentage':0.0,
                     'answer': 'I could not understand you, Would you like to see the list of questions that I am able to answer?\n'}
@@ -79,7 +80,7 @@ class Bot:
             },
             {
                 "Question": "Who made you?",
-                "Answer": "I was created by Nous.\n"
+                "Answer": "I was created by NousCommerce Team.\n"
             },
             {
                 "Question": "When were you born?",
