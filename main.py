@@ -1,6 +1,6 @@
 from similarity import find_most_similar, find_most_similar_interaction
 from corpus import CORPUS,TALK_TO_HUMAN
-from telegrambot import send_to_user
+# from telegrambot import send_to_user
 
 class Bot:
 
@@ -18,7 +18,7 @@ class Bot:
         #     self.allow_question(text)
         
 
-    def allow_question(self, text):
+    def allow_question(self, user,text):
         # Check for event stack
         potential_event = None
         # print(self.interact)
@@ -52,10 +52,11 @@ class Bot:
                 if answer['score'] < 0.1:
                     # send the question to humans
                     # print('No puedo responder eso, pronto una persona se pondrá en contacto contigo')
+                    return False
                     # return {'answer': 'No puedo responder eso, pronto una persona se pondrá en contacto contigo'}
                 # print(self.answer_question(answer, text))
                 return self.answer_question(answer, text)
-            
+        return True
 
     def answer_question(self, answer, text):
         if answer['score'] > self.settings['min_score']:
@@ -155,4 +156,3 @@ class Event:
         return 0
 
 
-Bot()
