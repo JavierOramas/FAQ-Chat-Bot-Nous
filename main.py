@@ -1,5 +1,6 @@
 from similarity import find_most_similar, find_most_similar_interaction
 from corpus import CORPUS,TALK_TO_HUMAN
+from telegrambot import send_to_user
 
 class Bot:
 
@@ -11,10 +12,10 @@ class Bot:
             "help_email": "fakeEmail@notArealEmail.com",
             "faq_page": "www.NotActuallyAnFAQ.com"
         }
-        print ("Ask a question:")
-        while(True):
-            text = input()
-            self.allow_question(text)
+        # print ("Ask a question:")
+        # while(True):
+        #     text = input()
+        #     self.allow_question(text)
         
 
     def allow_question(self, text):
@@ -28,8 +29,8 @@ class Bot:
             self.interact.pop()
             # text = input("Question to Human: ")
             # send question to humans
-            print("ok, wait until a human answers")
-            return {'answer': 'Question sent, wait for a response'}
+            # print("ok, wait until a human answers")
+            return {'answer': 'Hemos Recibido tu pregunta, pronto una persona se pondrá en contacto contigo'}
             
         if potential_event:
             # text = input("Response: ")
@@ -44,15 +45,15 @@ class Bot:
                 # print('here')
                 if person['score'] > 0.3:
                     self.interact.append(True)
-                    print('Asking what to send to a human')
-                    return {'answer': 'What do you want to ask to a human?'}
+                    # print('Asking what to send to a human')
+                    return {'answer': 'Que desea preguntarle a una persona real?'}
                 answer = find_most_similar(text)
-                print(answer['score'])
-                if answer['score'] < 0.3:
+                # print(answer['score'])
+                if answer['score'] < 0.1:
                     # send the question to humans
-                    print('Cant answer, Question sent to human')
-                    return {'answer': 'i cannot answer that, i just sent it to a human, wait for the response'}
-                print(self.answer_question(answer, text))
+                    # print('No puedo responder eso, pronto una persona se pondrá en contacto contigo')
+                    # return {'answer': 'No puedo responder eso, pronto una persona se pondrá en contacto contigo'}
+                # print(self.answer_question(answer, text))
                 return self.answer_question(answer, text)
             
 
@@ -139,7 +140,7 @@ class Event:
                     bot.allow_question()
                     return 0
        
-        text = input("Question: ")
+        # text = input("Question: ")
         answer = self.pre_built_responses_or_none(text)
         if not answer:
             answer = find_most_similar(text)
