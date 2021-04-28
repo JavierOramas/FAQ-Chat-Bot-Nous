@@ -2,14 +2,8 @@ from pyrogram import Client
 from pyrogram import filters
 from main import Bot
 
-config_data = {
-    'bot_user_name':
-    'api_id':
-    'api_hash':
-}
-
 bot = Bot()
-app = Client(config_data['bot_user_name'], config_data['api_id'], config_data['api_hash'])
+app = Client('bot',bot_token='1741277321:AAFT8uD12rZMlnTgB-boeZ6QuASM73y_9Rg')
 
 @app.on_message()
 def find_red(client, message):
